@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ShopSphere | Premium Product Catalog</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-content">
+        <div class="logo">
+          <span class="logo-icon">🛍️</span>
+          <h1>ShopSphere</h1>
+        </div>
+        <button class="cart-icon-btn" id="cartIconBtn" aria-label="Open cart preview">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-count-badge" id="cartCountBadge">0</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <!-- Sidebar Filters -->
+      <aside class="filters-sidebar" aria-label="Product filters">
+        <div class="filters-header">
+          <h3>Filters</h3>
+          <button id="clearFiltersBtn" class="clear-filters-link">Clear all</button>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-section">
+          <h4>Category</h4>
+          <div class="filter-options" id="categoryFilter"></div>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="filter-section">
+          <h4>Price Range</h4>
+          <div class="price-range-container">
+            <div class="price-inputs">
+              <input type="number" id="minPrice" placeholder="Min" min="0" step="10">
+              <span>-</span>
+              <input type="number" id="maxPrice" placeholder="Max" min="0" step="10">
+            </div>
+            <input type="range" id="priceSliderMin" min="0" max="500" step="10" value="0">
+            <input type="range" id="priceSliderMax" min="0" max="500" step="10" value="500">
+          </div>
+        </div>
+
+        <!-- Rating Filter -->
+        <div class="filter-section">
+          <h4>Minimum Rating</h4>
+          <div class="rating-filter" id="ratingFilter">
+            <button data-rating="4" class="rating-btn">4★ & up</button>
+            <button data-rating="3" class="rating-btn">3★ & up</button>
+            <button data-rating="2" class="rating-btn">2★ & up</button>
+            <button data-rating="1" class="rating-btn">1★ & up</button>
+          </div>
+        </div>
+
+        <!-- Availability Filter -->
+        <div class="filter-section">
+          <label class="checkbox-label">
+            <input type="checkbox" id="inStockOnly"> In Stock Only
+          </label>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Toolbar: View Toggle & Sort -->
+        <div class="catalog-toolbar">
+          <div class="view-toggle">
+            <button id="gridViewBtn" class="view-btn active" aria-label="Grid view" title="Grid view">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </button>
+            <button id="listViewBtn" class="view-btn" aria-label="List view" title="List view">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="sort-selector">
+            <label for="sortBy">Sort by:</label>
+            <select id="sortBy">
+              <option value="default">Featured</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="rating_desc">Top Rated</option>
+              <option value="newest">Newest Arrivals</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Grid/List Container -->
+        <div id="productsContainer" class="products-grid"></div>
+
+        <!-- Loading Skeleton -->
+        <div id="loadingSkeleton" class="loading-skeleton hidden">
+          <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state hidden">
+          <span class="empty-icon">🔍</span>
+          <p>No products match your filters</p>
+          <button id="resetFiltersEmptyBtn" class="btn-secondary">Clear Filters</button>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
+      </main>
+    </div>
+
+    <!-- Cart Preview Modal (Slide-out) -->
+    <div id="cartOverlay" class="cart-overlay hidden">
+      <div class="cart-panel" role="dialog" aria-label="Shopping cart">
+        <div class="cart-header">
+          <h3>Your Cart</h3>
+          <button id="closeCartBtn" class="close-cart" aria-label="Close cart">✕</button>
+        </div>
+        <div id="cartItemsList" class="cart-items"></div>
+        <div class="cart-footer">
+          <div class="cart-total">Total: <span id="cartTotal">$0.00</span></div>
+          <button id="checkoutBtn" class="btn-primary">Checkout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Product details">
+      <div class="modal-content">
+        <button class="modal-close" id="closeModalBtn" aria-label="Close modal">✕</button>
+        <div id="modalBody" class="modal-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
